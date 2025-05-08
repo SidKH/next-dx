@@ -8,15 +8,30 @@ const ROUTE_SEGMENT_PATTERNS = {
   "**/app/**/error.tsx": "${dirname} - error.tsx",
 };
 
-export async function configureRouteSegmentLabels(): Promise<void> {
+export async function activateRouteSegmentLabels(
+  context: vscode.ExtensionContext
+) {
+  await configureRouteSegmentLabels();
+
+  context.subscriptions.push(
+    vscode.workspace.onDidChangeConfiguration(async (e) => {
+      if (e.affectsConfiguration("nextDX.features.routeSegmentLabels")) {
+        await configureRouteSegmentLabels();
+      }
+    })
+  );
+}
+
+export async function configureRouteSegmentLabels() {
+  console.log("Configuring Next.js file labels...");
+
   const config = getConfiguration();
   const feature = config.features.routeSegmentLabels;
   const editorConfig = vscode.workspace.getConfiguration("workbench.editor");
 
   try {
     if (feature.enabled) {
-      // Check if customLabels.patterns is already set
-      const existingPatterns = editorConfig.get<any>("customLabels.patterns");
+      const existingPatterns = editorConfig.get("customLabels.patterns");
       if (existingPatterns && Object.keys(existingPatterns).length > 0) {
         const result = await vscode.window.showWarningMessage(
           `Next DX updates 'customLabels.patterns' in your configuration.
@@ -33,23 +48,35 @@ export async function configureRouteSegmentLabels(): Promise<void> {
           return;
         }
       }
-      // Apply route segment patterns when enabled
-      await editorConfig.update(
-        "customLabels.patterns",
-        ROUTE_SEGMENT_PATTERNS,
-        vscode.ConfigurationTarget.Global
-      );
-      console.log("Next.js route segment labels configured successfully");
+      await applyRouteSegmentPatterns();
     } else {
-      // Clear route segment patterns when disabled
-      await editorConfig.update(
-        "customLabels.patterns",
-        undefined,
-        vscode.ConfigurationTarget.Global
-      );
-      console.log("Next.js route segment labels cleared");
+      await clearRouteSegmentPatterns();
     }
   } catch (err) {
     console.error("Failed to configure Next.js route segment labels:", err);
   }
+}
+
+async function applyRouteSegmentPatterns() {
+  const editorConfig = vscode.workspace.getConfiguration("workbench.editor");
+  await editorConfig.update(
+    "customLabels.patterns",
+    ROUTE_SEGMENT_PATTERNS,
+    vscode.ConfigurationTarget.Global
+  );
+  console.log("Next.js route segment labels configured successfully");
+}
+
+async function clearRouteSegmentPatterns() {
+  const editorConfig = vscode.workspace.getConfiguration("workbench.editor");
+  await editorConfig.update(
+    "customLabels.patterns",
+    undefined,
+    vscode.ConfigurationTarget.Global
+  );
+  console.log("Next.js route segment labels cleared");
+}
+
+export async function deactivateRouteSegmentLabels() {
+  await clearRouteSegmentPatterns();
 }
