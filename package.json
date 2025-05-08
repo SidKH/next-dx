@@ -2,7 +2,7 @@
   "name": "next-dx",
   "displayName": "Next DX",
   "description": "Improved developer experience for Next.js projects",
-  "version": "0.0.1",
+  "version": "0.0.4",
   "publisher": "alexsidorenko",
   "license": "MIT",
   "repository": {
@@ -26,9 +26,10 @@
     "onStartupFinished"
   ],
   "main": "./dist/extension.js",
+  "icon": "icon.png",
   "galleryBanner": {
     "color": "#000000",
-    "theme": "light"
+    "theme": "dark"
   },
   "contributes": {
     "configuration": {
