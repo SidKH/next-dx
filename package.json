@@ -2,7 +2,7 @@
   "name": "next-dx",
   "displayName": "Next DX",
   "description": "Improved developer experience for Next.js projects",
-  "version": "0.0.4",
+  "version": "1.0.1",
   "publisher": "alexsidorenko",
   "license": "MIT",
   "repository": {
