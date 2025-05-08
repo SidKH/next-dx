@@ -1,17 +1,6 @@
 import * as vscode from "vscode";
 
-export interface FeatureConfiguration {
-  enabled: boolean;
-}
-
-export interface ExtensionConfiguration {
-  features: {
-    routeSegmentLabels: FeatureConfiguration;
-    // Add more features here as they are developed
-  };
-}
-
-const DEFAULT_CONFIGURATION: ExtensionConfiguration = {
+const DEFAULT_CONFIGURATION = {
   features: {
     routeSegmentLabels: {
       enabled: true,
@@ -19,7 +8,9 @@ const DEFAULT_CONFIGURATION: ExtensionConfiguration = {
   },
 };
 
-export function getConfiguration(): ExtensionConfiguration {
+type FeatureName = keyof typeof DEFAULT_CONFIGURATION.features;
+
+export function getConfiguration() {
   const config = vscode.workspace.getConfiguration("nextDX");
   return {
     features: {
@@ -32,9 +23,7 @@ export function getConfiguration(): ExtensionConfiguration {
   };
 }
 
-export function isFeatureEnabled(
-  featureName: keyof ExtensionConfiguration["features"]
-): boolean {
+export function isFeatureEnabled(featureName: FeatureName) {
   const config = getConfiguration();
   return config.features[featureName]?.enabled ?? false;
 }

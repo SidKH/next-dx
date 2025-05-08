@@ -15,6 +15,24 @@ export async function configureRouteSegmentLabels(): Promise<void> {
 
   try {
     if (feature.enabled) {
+      // Check if customLabels.patterns is already set
+      const existingPatterns = editorConfig.get<any>("customLabels.patterns");
+      if (existingPatterns && Object.keys(existingPatterns).length > 0) {
+        const result = await vscode.window.showWarningMessage(
+          `Next DX updates 'customLabels.patterns' in your configuration.
+          
+          However, it seems like you already have 'customLabels.patterns' configured 👇 \n\n ${JSON.stringify(
+            existingPatterns
+          )} \n\n Do you want to replace it with Next DX config?`,
+          { modal: true },
+          "Replace",
+          "Cancel"
+        );
+        if (result !== "Replace") {
+          console.log("User cancelled replacing customLabels.patterns");
+          return;
+        }
+      }
       // Apply route segment patterns when enabled
       await editorConfig.update(
         "customLabels.patterns",
