@@ -3,8 +3,7 @@
   "displayName": "next-dx",
   "description": "Improved developer experience for Next.js projects",
   "version": "1.0.0",
-  "publisher": "Alex Sidorenko",
-  "private": true,
+  "publisher": "alexsidorenko",
   "license": "MIT",
   "repository": {
     "type": "git",
@@ -43,6 +42,7 @@
   },
   "scripts": {
     "vscode:prepublish": "pnpm run package",
+    "vscode:publish": "pnpm vsce publish --no-dependencies",
     "compile": "webpack",
     "watch": "webpack --watch",
     "package": "webpack --mode production --devtool hidden-source-map",
@@ -53,7 +53,7 @@
     "test": "vscode-test"
   },
   "devDependencies": {
-    "@types/vscode": "^1.99.0",
+    "@types/vscode": "^1.96.2",
     "@types/mocha": "^10.0.7",
     "@types/node": "20.x",
     "@typescript-eslint/eslint-plugin": "^7.14.1",
