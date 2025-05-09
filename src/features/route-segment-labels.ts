@@ -1,5 +1,4 @@
 import * as vscode from "vscode";
-import { getConfiguration } from "../config/configuration";
 
 const ROUTE_SEGMENT_PATTERNS = {
   "**/app/**/page.tsx": "${dirname} - page.tsx",
@@ -7,6 +6,8 @@ const ROUTE_SEGMENT_PATTERNS = {
   "**/app/**/template.tsx": "${dirname} - template.tsx",
   "**/app/**/error.tsx": "${dirname} - error.tsx",
 };
+
+type CustomLabelPatterns = Record<string, string>;
 
 export async function activateRouteSegmentLabels(
   context: vscode.ExtensionContext
@@ -25,29 +26,11 @@ export async function activateRouteSegmentLabels(
 export async function configureRouteSegmentLabels() {
   console.log("Configuring Next.js file labels...");
 
-  const config = getConfiguration();
-  const feature = config.features.routeSegmentLabels;
-  const editorConfig = vscode.workspace.getConfiguration("workbench.editor");
+  const config = vscode.workspace.getConfiguration("nextDX");
+  const enabled = config.get<boolean>("features.routeSegmentLabels.enabled");
 
   try {
-    if (feature.enabled) {
-      const existingPatterns = editorConfig.get("customLabels.patterns");
-      if (existingPatterns && Object.keys(existingPatterns).length > 0) {
-        const result = await vscode.window.showWarningMessage(
-          `Next DX updates 'customLabels.patterns' in your configuration.
-          
-          However, it seems like you already have 'customLabels.patterns' configured 👇 \n\n ${JSON.stringify(
-            existingPatterns
-          )} \n\n Do you want to replace it with Next DX config?`,
-          { modal: true },
-          "Replace",
-          "Cancel"
-        );
-        if (result !== "Replace") {
-          console.log("User cancelled replacing customLabels.patterns");
-          return;
-        }
-      }
+    if (enabled) {
       await applyRouteSegmentPatterns();
     } else {
       await clearRouteSegmentPatterns();
@@ -59,9 +42,18 @@ export async function configureRouteSegmentLabels() {
 
 async function applyRouteSegmentPatterns() {
   const editorConfig = vscode.workspace.getConfiguration("workbench.editor");
+  const existingPatterns =
+    editorConfig.get<CustomLabelPatterns>("customLabels.patterns") || {};
+
+  // Merge existing patterns with route segment patterns
+  const updatedPatterns = {
+    ...existingPatterns,
+    ...ROUTE_SEGMENT_PATTERNS,
+  };
+
   await editorConfig.update(
     "customLabels.patterns",
-    ROUTE_SEGMENT_PATTERNS,
+    updatedPatterns,
     vscode.ConfigurationTarget.Global
   );
   console.log("Next.js route segment labels configured successfully");
@@ -69,9 +61,18 @@ async function applyRouteSegmentPatterns() {
 
 async function clearRouteSegmentPatterns() {
   const editorConfig = vscode.workspace.getConfiguration("workbench.editor");
+  const existingPatterns =
+    editorConfig.get<CustomLabelPatterns>("customLabels.patterns") || {};
+
+  // Remove only the route segment patterns while keeping other patterns
+  const updatedPatterns = { ...existingPatterns };
+  Object.keys(ROUTE_SEGMENT_PATTERNS).forEach((key) => {
+    delete updatedPatterns[key];
+  });
+
   await editorConfig.update(
     "customLabels.patterns",
-    undefined,
+    updatedPatterns,
     vscode.ConfigurationTarget.Global
   );
   console.log("Next.js route segment labels cleared");
