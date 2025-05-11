@@ -4,10 +4,10 @@ import {
   activateRouteSegmentLabels,
 } from "./features/route-segment-labels";
 
-export async function activate(context: vscode.ExtensionContext) {
-  await activateRouteSegmentLabels(context);
+export function activate(context: vscode.ExtensionContext) {
+  activateRouteSegmentLabels(context);
 }
 
-export async function deactivate() {
-  await deactivateRouteSegmentLabels();
+export function deactivate() {
+  deactivateRouteSegmentLabels();
 }

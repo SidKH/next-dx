@@ -1,5 +1,5 @@
 # Next DX VS Code Extension
 
-Improves DX - for Next.js projects.
+Improves developer exeprience for Next.js projects.
 
 ## Route segment labels
