@@ -5,20 +5,16 @@ export function activateWelcomePage(context: vscode.ExtensionContext) {
   const hasShownWelcome = context.globalState.get("nextdxHasShownWelome");
 
   if (!hasShownWelcome) {
-    showWelcomePage(context);
+    showWelcomePage();
     context.globalState.update("nextdxHasShownWelome", true);
   }
 }
 
-function showWelcomePage(context: vscode.ExtensionContext) {
+function showWelcomePage() {
   const panel = vscode.window.createWebviewPanel(
     "nextDXWelcome",
     "Welcome to Next DX",
-    vscode.ViewColumn.One,
-    {
-      enableScripts: true,
-      retainContextWhenHidden: true,
-    }
+    vscode.ViewColumn.One
   );
 
   panel.webview.html = getWelcomePageContent();
