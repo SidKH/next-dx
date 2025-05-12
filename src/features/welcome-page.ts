@@ -1,7 +1,6 @@
 import * as vscode from "vscode";
 
 export function activateWelcomePage(context: vscode.ExtensionContext) {
-  context.globalState.update("nextdxHasShownWelome", false);
   const hasShownWelcome = context.globalState.get("nextdxHasShownWelome");
 
   if (!hasShownWelcome) {
