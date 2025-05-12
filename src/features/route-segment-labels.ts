@@ -9,33 +9,12 @@ const ROUTE_SEGMENT_PATTERNS = {
 
 type CustomLabelPatterns = Record<string, string>;
 
-export function activateRouteSegmentLabels(context: vscode.ExtensionContext) {
-  configureRouteSegmentLabels();
-
-  context.subscriptions.push(
-    vscode.workspace.onDidChangeConfiguration((e) => {
-      if (e.affectsConfiguration("nextDX.features.routeSegmentLabels")) {
-        configureRouteSegmentLabels();
-      }
-    })
-  );
+export function activateRouteSegmentLabels() {
+  applyRouteSegmentPatterns();
 }
 
-export function configureRouteSegmentLabels() {
-  console.log("Configuring Next.js file labels...");
-
-  const config = vscode.workspace.getConfiguration("nextDX");
-  const enabled = config.get<boolean>("features.routeSegmentLabels.enabled");
-
-  try {
-    if (enabled) {
-      applyRouteSegmentPatterns();
-    } else {
-      clearRouteSegmentPatterns();
-    }
-  } catch (err) {
-    console.error("Failed to configure Next.js route segment labels:", err);
-  }
+export function deactivateRouteSegmentLabels() {
+  clearRouteSegmentPatterns();
 }
 
 function applyRouteSegmentPatterns() {
@@ -54,7 +33,6 @@ function applyRouteSegmentPatterns() {
     updatedPatterns,
     vscode.ConfigurationTarget.Global
   );
-  console.log("Next.js route segment labels configured successfully");
 }
 
 function clearRouteSegmentPatterns() {
@@ -73,9 +51,4 @@ function clearRouteSegmentPatterns() {
     updatedPatterns,
     vscode.ConfigurationTarget.Global
   );
-  console.log("Next.js route segment labels cleared");
-}
-
-export function deactivateRouteSegmentLabels() {
-  clearRouteSegmentPatterns();
 }

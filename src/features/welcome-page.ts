@@ -1,6 +1,7 @@
 import * as vscode from "vscode";
 
 export function activateWelcomePage(context: vscode.ExtensionContext) {
+  context.globalState.update("nextdxHasShownWelome", false);
   const hasShownWelcome = context.globalState.get("nextdxHasShownWelome");
 
   if (!hasShownWelcome) {
@@ -56,7 +57,7 @@ function getWelcomePageContent() {
   </head>
   <body>
     <h1>Welcome to Next DX! 👋</h1>
-    <p>The extension has updated your User Settings to show better labels for route segments<br />(<i>no more page.tsx/page.tsx/page.tsx</i>🙈)</p>
+    <p>The extension has updated your User Settings to show better labels for Next.js route segments<br />(no more page.tsx | page.tsx | page.tsx 🙈)</p>
     <pre>
       <code>"workbench.editor.customLabels.patterns": {
   "**/app/**/page.tsx": "\${dirname} - page.tsx",
@@ -66,7 +67,7 @@ function getWelcomePageContent() {
 }</code>
     </pre>
     <p>If you want to change labels patterns, or delete them, you can do it in your User Settings (JSON)</p>
-    <h2>More Next DX improvements coming soon:</h2>
+    <h2>More improvements coming soon:</h2>
     <ul>
       <li>
         Fix autoimport of Link component when using Lucia icons

@@ -7,7 +7,7 @@ import { activateWelcomePage } from "./features/welcome-page";
 
 export function activate(context: vscode.ExtensionContext) {
   activateWelcomePage(context);
-  activateRouteSegmentLabels(context);
+  activateRouteSegmentLabels();
 }
 
 export function deactivate() {
